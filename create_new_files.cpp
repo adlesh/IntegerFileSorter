@@ -19,30 +19,37 @@ int nbr_files_to_create = 3;
 
 enum Exceptions {inv_arg_exc = 1, out_of_range_exc};
 
-int parseCommandArguments(int argc, char* argv[])
+int parse_command_arguments(int argc, char* argv[])
 {
+	// if there were additional commands entered
 	if (argc > 1)
 	{
+		// try to parse each command into an integer
 		for (int arg_ndx = 1; arg_ndx < argc; ++arg_ndx)
 		{
+			// default error value for parsed argv[arg_ndx], arg
 			int arg = -1;
+			// attempt to parse the current argument
 			try 
 			{
 				arg = stoi(argv[arg_ndx]);
 			}
+			// handle an invalid argument error
 			catch (const invalid_argument& ia)
 			{
 				cout << "Invalid Argument, " << ia.what() << ", was entered.\n";
 				return inv_arg_exc;
 			}
+			// handle integer range error
 			catch (const out_of_range& oor)
 			{
 				cout << "Input, "<< oor.what()<<", was outside of integer value range.\n";
 				return out_of_range_exc;
 			}
-			
+			// if parsing was successful
 			if (arg != -1)
 			{
+				// handle the parsed argument
 				switch (arg_ndx)
 				{
 					case 1:
