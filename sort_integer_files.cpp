@@ -4,9 +4,11 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
+#include <vector>
 #include <stdexcept>
+#include <algorithm>
 
-enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc, };
+enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
 int numerical_arg_start_ndx = 2;
 
@@ -86,16 +88,77 @@ int parse_command_arguments(int argc, char* argv[])
 	return no_exc;
 }
 
+vector<int> tokenize_line(string curr_line)
+{
+	size_t pos = 0;
+	string token;
+	vector<int> values_from_line;
+	string delimiter = " ";
+	try 
+	{
+		int value = -1;
+		while ((pos = curr_line.find(delimiter)) != string::npos)
+		{
+		    token = curr_line.substr(0, pos);
+		    cout << token << ", ";
+		    curr_line.erase(0, pos + delimiter.length());
+		    
+		    value = stoi(token);
+		    
+		    if (value != -1)
+		    {
+		    	values_from_line.push_back(value);
+		    	value = -1;
+		    }
+		}
+		
+		value = stoi(curr_line);
+		if (value != -1)
+		{
+			values_from_line.push_back(value);
+			cout << value << endl;
+		}
+		
+	}
+	// handle an invalid argument error
+	catch (const invalid_argument& ia)
+	{
+		cout << "Invalid Argument, " << ia.what() << ", was entered.\n";
+	}
+	// handle integer range error
+	catch (const out_of_range& oor)
+	{
+		cout << "Input, "<< oor.what()<<", was outside of integer value range.\n";
+	}
+	
+	return values_from_line;
+	/*
+	stable_sort(values_from_line.begin(), values_from_line.end());
+	for (vector<int>::iterator it = values_from_line.begin(); it != values_from_line.end(); ++it)
+	{
+		cout << " " << *it;
+	}
+	cout << endl;*/
+}
+
 int read_file()
 {
 	cout << in_file_name << " was opened successfully.\n";
     string curr_line;
     
-    while (getline(my_infile, curr_line))
+    try
     {
-    	cout << curr_line << "\n";
+	    while (getline(my_infile, curr_line))
+	    {
+	    	cout << curr_line << endl;
+	    	vector<int> parsed_ints_from_line = tokenize_line(curr_line);
+	    }
+    
     }
-    my_infile.close();
+    catch (ios_base::failure fail)
+    {
+    	cout << "Unable to get line " << fail.what() << endl;
+    }
 }
 
 int main (int argc, char* argv[]) 
@@ -115,11 +178,12 @@ int main (int argc, char* argv[])
 		  // if it was created/opened correctly,
 		  if (my_infile.is_open())
 		  {
-		    
+		  	read_file();
+		    my_infile.close();
 		  }
 		  else cout << "Unable to open file";
-	  cout << "File name: " << in_file_name << "\n";
-	  cout << "Out File Name: " << out_file_name.str() << "\n";
+	  cout << "File name: " << in_file_name << endl;
+	  cout << "Out File Name: " << out_file_name.str() << endl;
 	  
   }
   return 0;
