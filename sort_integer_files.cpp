@@ -190,37 +190,41 @@ int write_file(vector<vector<int>> parsed_lines)
 	}
 }
 
-int main (int argc, char* argv[]) 
-{  
+void execute(int argc, char* argv[])
+{
   int args_parsed = parse_command_arguments(argc, argv);
   if (args_parsed == no_exc)
   {
-          // create the file's name
-	  	  stringstream out_file_name;
-	  	  out_file_name << file_name << file_amend << file_format;
-	  	  
-  	  	  my_infile.open(in_file_name, ios::in);
-	  	  bool file_read_success = false;
-		  
-		  // if it was created/opened correctly,
-		  if (my_infile.is_open())
-		  {
-		  	file_read_success = true;
-		  	vector<vector<int>> parsed_lines = read_file();
-		  	if (parsed_lines.size() > 0)
-		  	{
-		  		// create the stream for writing to the new file
-		  		my_outfile.open(out_file_name.str(), ios::out);
-		  		if (my_outfile.is_open())
-		  		{
-			  		write_file(parsed_lines);
-		  		}
-		  		else cout << "Unable to open file " << out_file_name.str() << endl;
-		  	}
-		    my_infile.close();
-		  }
-		  else cout << "Unable to open file " << in_file_name << endl;
+	  // create the file's name
+	  stringstream out_file_name;
+	  out_file_name << file_name << file_amend << file_format;
 	  
+  	  my_infile.open(in_file_name, ios::in);
+	  bool file_read_success = false;
+  
+	  // if it was created/opened correctly,
+	  if (my_infile.is_open())
+	  {
+	  	int args_parsed = parse_command_arguments(argc, argv);
+	  	file_read_success = true;
+	  	vector<vector<int>> parsed_lines = read_file();
+	  	if (parsed_lines.size() > 0)
+	  	{
+	  		// create the stream for writing to the new file
+	  		my_outfile.open(out_file_name.str(), ios::out);
+	  		if (my_outfile.is_open())
+	  		{
+		  		write_file(parsed_lines);
+	  		}
+	  		else cout << "Unable to open file " << out_file_name.str() << endl;
+	  	}
+	    my_infile.close();
+	  }
+	  else cout << "Unable to open file " << in_file_name << endl;
   }
+}
+int main (int argc, char* argv[]) 
+{  
+  execute(argc, argv);
   return 0;
 }

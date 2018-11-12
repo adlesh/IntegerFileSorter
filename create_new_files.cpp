@@ -95,27 +95,32 @@ int main (int argc, char* argv[]) {
 	  	  // create the file's name
 	  	  stringstream filename;
 	  	  filename << "file" << file_no << ".txt";
-	  	  
+	  	  int multiplier = file_no+1;
 	  	  // create the stream for writing to the new file
 		  ofstream myfile (filename.str());
 		  
 		  // if it was created/opened correctly,
 		  if (myfile.is_open())
 		  {
+		  	
 		    // generate the desired number of lines 
 		    int curr_nbr_lines = 0;
-		    while (curr_nbr_lines < nbr_lines_per_file)
+		    
+		    while (curr_nbr_lines < multiplier * nbr_lines_per_file)
 		    {
+		    	//cout << multiplier * nbr_lines_per_file << endl;
+		    	
 		        // generate nbr_values_per_line random numbers
 			    int curr_nbr_values = 0;
-			    while (curr_nbr_values < nbr_values_per_line)
+			    while (curr_nbr_values < multiplier * nbr_values_per_line)
 			    {
 			    	int value = (rand()%(max_line_value-min_line_value))+min_line_value;
-			    	(curr_nbr_values < nbr_values_per_line - 1) ? myfile << value << " " : myfile << value;
+			    	(curr_nbr_values < multiplier * nbr_values_per_line - 1) ? myfile << value << " " : myfile << value;
 			    	++curr_nbr_values;
 			    }
-			    (curr_nbr_lines != nbr_lines_per_file-1) ? myfile << "\n" : myfile << "";
+			    (curr_nbr_lines != multiplier * nbr_lines_per_file-1) ? myfile << endl : myfile << "";
 			    ++curr_nbr_lines;
+			   
 		    }
 		    myfile.close();
 		  }
