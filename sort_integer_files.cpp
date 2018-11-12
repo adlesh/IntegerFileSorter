@@ -23,57 +23,6 @@ string in_file_name = "";
 ifstream my_infile;
 ofstream my_outfile;
 
-/*
-int handle_integer_arguments(int argc, char* argv[])
-{
-	// try to parse each command into an integer
-	for (int arg_ndx = numerical_arg_start_ndx; arg_ndx < argc; ++arg_ndx)
-	{
-		// default error value for parsed argv[arg_ndx], arg
-		int arg = -1;
-		// attempt to parse the current argument
-		try 
-		{
-			arg = stoi(argv[arg_ndx]);
-		}
-		// handle an invalid argument error
-		catch (const invalid_argument& ia)
-		{
-			cout << "Invalid Argument, " << ia.what() << ", was entered.\n";
-			return inv_arg_exc;
-		}
-		// handle integer range error
-		catch (const out_of_range& oor)
-		{
-			cout << "Input, "<< oor.what()<<", was outside of integer value range.\n";
-			return out_of_range_exc;
-		}
-		// if parsing was successful
-		if (arg != -1)
-		{
-			// handle the parsed argument
-			switch (arg_ndx)
-			{
-				case numerical_arg_start_ndx:
-					nbr_files_to_create = arg;
-					break;
-				case numerical_arg_start_ndx+1:
-					nbr_lines_per_file = arg;
-					break;
-				case numerical_arg_start_ndx+2:
-					nbr_values_per_line = arg;
-					break;
-				case numerical_arg_start_ndx+3:
-					min_line_value = arg;
-					break;
-				case numerical_arg_start_ndx+4:
-					max_line_value = arg;
-					break;
-			}
-		}
-	}
-}*/
-
 int parse_command_arguments(int argc, char* argv[])
 {
 	// if there were additional commands entered
@@ -210,6 +159,7 @@ void execute(int argc, char* argv[])
 	  		if (my_outfile.is_open())
 	  		{
 		  		write_file(parsed_lines);
+		  		my_outfile.close();
 	  		}
 	  		else cout << "Unable to open file " << out_file_name.str() << endl;
 	  	}

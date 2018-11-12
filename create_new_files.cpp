@@ -28,23 +28,26 @@ string file_name = "file";
 enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
 const int numerical_arg_start_ndx = 2;
-const int char_arg_start_ndx = 1;
 
 int parse_command_arguments(int argc, char* argv[])
 {
 	int ret_val = no_exc;
 	// if there were additional commands entered
-	if (argc > 1)
+	if (argc > 0)
 	{
+		int diff = -1;
 		// try to parse each command into an integer
-		for (int arg_ndx = 0; arg_ndx < argc; ++arg_ndx)
+		for (int arg_ndx = 1; arg_ndx < argc; ++arg_ndx)
 		{
+			
 			// default error value for parsed argv[arg_ndx], arg
 			int arg = -1;
 			// attempt to parse the current argument
 			try 
 			{
 				arg = stoi(argv[arg_ndx]);
+				if (diff == -1)
+					diff = numerical_arg_start_ndx - arg_ndx;
 			}
 			// handle an non-integer argument
 			catch (const invalid_argument& ia)
@@ -74,8 +77,8 @@ int parse_command_arguments(int argc, char* argv[])
 			// if parsing was successful
 			if (arg != -1)
 			{
-				// handle the parsed argument
-				switch (arg_ndx)
+				//handle the parsed argument
+				switch (arg_ndx+diff)
 				{
 					case numerical_arg_start_ndx:
 						nbr_files_to_create = arg;
