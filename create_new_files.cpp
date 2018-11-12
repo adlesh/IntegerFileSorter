@@ -1,4 +1,10 @@
-// writing on a text file
+/*
+ *  Program that creates files containing lines of randomly generated integers
+ *  Argument Order is strict and follows: ./prog_name NBR_FILES NBR_LINES NBR_VALUES MIN_VALUE MAX_VALUE
+ *   Latter arguments may be excluded from invocation, however, the program does
+ *   NOT attempt to reorder them if missing...i.e.
+ *     ./prog 5 6 7 creates 5 files 6 lines/file 7 values/line with default MIN_VALUE and MAX_VALUE
+ */
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -9,7 +15,7 @@
 
 using namespace std;
 
-// different attributes of the file to be created
+// different, default attributes of the file to be created
 // will be extended to take command-line arguments
 int min_line_value = 100;
 int max_line_value = 1000;
@@ -17,7 +23,7 @@ int nbr_values_per_line = 10;
 int nbr_lines_per_file = 100; 
 int nbr_files_to_create = 3;
 
-enum Exceptions {inv_arg_exc = 1, out_of_range_exc};
+enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
 int parse_command_arguments(int argc, char* argv[])
 {
@@ -78,7 +84,7 @@ int parse_command_arguments(int argc, char* argv[])
 
 int main (int argc, char* argv[]) {  
   int args_parsed = parse_command_arguments(argc, argv);
-  if (args_parsed == 0)
+  if (args_parsed == no_exc)
   {
 	  // seed the random number generator with a call to current epoch time
 	  srand((unsigned) time(NULL));
@@ -88,7 +94,7 @@ int main (int argc, char* argv[]) {
 	  {
 	  	  // create the file's name
 	  	  stringstream filename;
-	  	  filename << "example" << file_no << ".txt";
+	  	  filename << "file" << file_no << ".txt";
 	  	  
 	  	  // create the stream for writing to the new file
 		  ofstream myfile (filename.str());
