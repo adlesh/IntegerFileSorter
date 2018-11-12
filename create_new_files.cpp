@@ -1,9 +1,9 @@
 /*
  *  Program that creates files containing lines of randomly generated integers
- *  Argument Order is strict and follows: ./prog_name NBR_FILES NBR_LINES NBR_VALUES MIN_VALUE MAX_VALUE
+ *  Argument Order is strict and follows: ./prog_name BASE_FILE_NAME NBR_FILES NBR_LINES NBR_VALUES MIN_VALUE MAX_VALUE
  *   Latter arguments may be excluded from invocation, however, the program does
  *   NOT attempt to reorder them if missing...i.e.
- *     ./prog 5 6 7 creates 5 files 6 lines/file 7 values/line with default MIN_VALUE and MAX_VALUE
+ *     ./prog file 5 6 7 creates 5 files named 'file#.txt' 6 lines/file 7 values/line with default MIN_VALUE and MAX_VALUE
  */
 #include <iostream>
 #include <sstream>
@@ -23,15 +23,21 @@ int nbr_values_per_line = 10;
 int nbr_lines_per_file = 100; 
 int nbr_files_to_create = 3;
 
+string file_name = "file";
+
 enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
+
+const int numerical_arg_start_ndx = 2;
+const int char_arg_start_ndx = 1;
 
 int parse_command_arguments(int argc, char* argv[])
 {
+	int ret_val = no_exc;
 	// if there were additional commands entered
 	if (argc > 1)
 	{
 		// try to parse each command into an integer
-		for (int arg_ndx = 1; arg_ndx < argc; ++arg_ndx)
+		for (int arg_ndx = 0; arg_ndx < argc; ++arg_ndx)
 		{
 			// default error value for parsed argv[arg_ndx], arg
 			int arg = -1;
@@ -40,11 +46,24 @@ int parse_command_arguments(int argc, char* argv[])
 			{
 				arg = stoi(argv[arg_ndx]);
 			}
-			// handle an invalid argument error
+			// handle an non-integer argument
 			catch (const invalid_argument& ia)
 			{
-				cout << "Invalid Argument, " << ia.what() << ", was entered.\n";
-				return inv_arg_exc;
+				if (arg_ndx > 0)
+				{
+					int was_arg = false;
+					// check if it's actually an argument
+					switch (arg_ndx)
+					{
+						case char_arg_start_ndx:
+							file_name = argv[arg_ndx];
+							was_arg = true;
+							break;
+					}
+					if (!was_arg)
+						cout << arg_ndx << " Invalid Argument, " << ia.what() << ", was entered.\n";
+					ret_val = (was_arg) ? no_exc : inv_arg_exc;
+				}
 			}
 			// handle integer range error
 			catch (const out_of_range& oor)
@@ -58,28 +77,27 @@ int parse_command_arguments(int argc, char* argv[])
 				// handle the parsed argument
 				switch (arg_ndx)
 				{
-					case 1:
+					case numerical_arg_start_ndx:
 						nbr_files_to_create = arg;
 						break;
-					case 2:
+					case numerical_arg_start_ndx+1:
 						nbr_lines_per_file = arg;
 						break;
-					case 3:
+					case numerical_arg_start_ndx+2:
 						nbr_values_per_line = arg;
 						break;
-					case 4:
+					case numerical_arg_start_ndx+3:
 						min_line_value = arg;
 						break;
-					case 5:
+					case numerical_arg_start_ndx+4:
 						max_line_value = arg;
 						break;
 				}
 			}
-			
 		}
 	}
 	
-	return 0;
+	return ret_val;
 }
 
 int main (int argc, char* argv[]) {  
@@ -94,7 +112,8 @@ int main (int argc, char* argv[]) {
 	  {
 	  	  // create the file's name
 	  	  stringstream filename;
-	  	  filename << "file" << file_no << ".txt";
+	  	  filename << file_name << file_no << ".txt";
+	  	  
 	  	  int multiplier = file_no+1;
 	  	  // create the stream for writing to the new file
 		  ofstream myfile (filename.str());
@@ -108,17 +127,17 @@ int main (int argc, char* argv[]) {
 		    
 		    while (curr_nbr_lines < multiplier * nbr_lines_per_file)
 		    {
-		    	//cout << multiplier * nbr_lines_per_file << endl;
-		    	
 		        // generate nbr_values_per_line random numbers
 			    int curr_nbr_values = 0;
 			    while (curr_nbr_values < multiplier * nbr_values_per_line)
 			    {
 			    	int value = (rand()%(max_line_value-min_line_value))+min_line_value;
-			    	(curr_nbr_values < multiplier * nbr_values_per_line - 1) ? myfile << value << " " : myfile << value;
+			    	(curr_nbr_values < multiplier * nbr_values_per_line - 1) ?
+			    	    myfile << value << " " : myfile << value;
 			    	++curr_nbr_values;
 			    }
-			    (curr_nbr_lines != multiplier * nbr_lines_per_file-1) ? myfile << endl : myfile << "";
+			    (curr_nbr_lines != multiplier * nbr_lines_per_file-1) ?
+			        myfile << endl : myfile << "";
 			    ++curr_nbr_lines;
 			   
 		    }

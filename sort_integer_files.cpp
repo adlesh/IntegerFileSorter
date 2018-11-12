@@ -10,7 +10,7 @@
 
 enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
-int numerical_arg_start_ndx = 2;
+const int numerical_arg_start_ndx = 2;
 
 using namespace std;
 
@@ -136,11 +136,6 @@ vector<int> tokenize_line(string curr_line)
 vector<int> sort_line(vector<int> values_from_line)
 {
 	stable_sort(values_from_line.begin(), values_from_line.end());
-	/*for (vector<int>::iterator it = values_from_line.begin(); it != values_from_line.end(); ++it)
-	{
-		cout << " " << *it;
-	}
-	cout << endl;*/
 	
 	return values_from_line;
 }
