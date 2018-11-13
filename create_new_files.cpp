@@ -3,7 +3,7 @@
  *  Argument Order is strict and follows: ./prog_name BASE_FILE_NAME NBR_FILES NBR_LINES NBR_VALUES MIN_VALUE MAX_VALUE
  *   Latter arguments may be excluded from invocation, however, the program does
  *   NOT attempt to reorder them if missing...i.e.
- *     ./prog file 5 6 7 creates 5 files named 'file#.txt' 6 lines/file 7 values/line with default MIN_VALUE and MAX_VALUE
+ *     ./prog test 5 6 7 creates 5 files named 'test#.txt' 6 lines/file 7 values/line with default MIN_VALUE and MAX_VALUE
  */
 #include <iostream>
 #include <sstream>
@@ -17,9 +17,9 @@ using namespace std;
 
 // different, default attributes of the file to be created
 // will be extended to take command-line arguments
-int min_line_value = 100;
-int max_line_value = 1000;
-int nbr_values_per_line = 10;
+int min_line_value = 1;
+int max_line_value = 100;
+int nbr_values_per_line = 100;
 int nbr_lines_per_file = 100; 
 int nbr_files_to_create = 3;
 
@@ -28,6 +28,7 @@ string file_name = "file";
 enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
 const int numerical_arg_start_ndx = 2;
+const int char_arg_start_ndx = 1;
 
 int parse_command_arguments(int argc, char* argv[])
 {

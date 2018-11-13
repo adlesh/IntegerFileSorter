@@ -14,7 +14,7 @@ sort.o: $(SORT_CPP)
 
 .PHONY: clean
 clean:
-	rm $(CREATE_EXEC) $(SORT_EXEC) *.o file*.txt
+	rm $(CREATE_EXEC) $(SORT_EXEC) *.o *.txt
 
 run:
 	make; ./$(CREATE_EXEC) 1 10 10 1 10; ./$(SORT_EXEC) file0

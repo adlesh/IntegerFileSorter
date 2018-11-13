@@ -3,11 +3,12 @@
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
-
+#include <sys/resource.h>
 enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
 const int numerical_arg_start_ndx = 2;
@@ -169,7 +170,35 @@ void execute(int argc, char* argv[])
   }
 }
 int main (int argc, char* argv[]) 
-{  
+{
+  struct rusage r_usage;
+  getrusage(RUSAGE_SELF, &r_usage);
+  long start_in_block, start_out_block,
+       end_in_block, end_out_block,
+       diff_in_block, diff_out_block;
+       
+  clock_t start_clock, end_clock;
+  
+  start_clock = clock();
+  start_in_block = r_usage.ru_inblock;
+  start_out_block = r_usage.ru_oublock;
+  
   execute(argc, argv);
+  
+  getrusage(RUSAGE_SELF, &r_usage);
+  
+  end_in_block = r_usage.ru_inblock;
+  end_out_block = r_usage.ru_oublock;
+  end_clock = clock();
+  
+  diff_in_block = end_in_block - start_in_block;
+  diff_out_block = end_out_block - start_out_block;
+  
+  cout << "Input blocking: " << diff_in_block << endl <<
+          "Output blocking: " << diff_out_block << endl;
+  
+  double clock_diff = 1000*(end_clock - start_clock) / CLOCKS_PER_SEC;
+  
+  cout << "Diff in clocks: " << clock_diff << " ms"<< endl;
   return 0;
 }
