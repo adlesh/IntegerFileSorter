@@ -1,6 +1,6 @@
 I/O Performance: File sort
 
-This project is implemented to fulfill my SW Eng course's Individual Project.
+This project is implemented to fulfill my SW Eng course' Individual Project.
 The goal of the project is to map and model the effects on the CPU and I/O perfo
 rmance of a program under various situations. The system provides two C++ progra
 ms: one to create the input files and the other that will be modelled. The input
@@ -50,3 +50,13 @@ Creating new input files:
                   {default=1}
  6th) max_value - desired maximum integer value to be generated
                   {default=100}
+
+Sorting Files:
+ Usage:
+  ./sort_file file_name
+  
+ Command-Line Arguments, if present, are position locked and all arguments prior
+ to any desired to be omitted must be stated:
+ 1st) file_name - desired base name for any files created 
+                  [may be omitted without affecting position-lock system]
+                  {default='file0'}

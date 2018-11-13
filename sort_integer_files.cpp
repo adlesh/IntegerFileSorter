@@ -30,10 +30,11 @@ int parse_command_arguments(int argc, char* argv[])
 	if (argc > 1)
 	{
 		// set the base file name
-		file_name = argv[1];
-		// create the input file name by concatenating file_name and file_format
-		in_file_name = file_name + file_format;
+		file_name = argv[1];		
 	}
+	
+	// create the input file name by concatenating file_name and file_format
+	in_file_name = file_name + file_format;
 	
 	return no_exc;
 }
