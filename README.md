@@ -12,6 +12,7 @@ file's name.
 
 ## Building system:
 > Included with the system is a Makefile
+
  - make: compiles create_new_files.cpp and sort_integer_files.cpp to create
          executables for user to use: create_files and sort_file
          
@@ -21,10 +22,11 @@ file's name.
  - make clean: clears the working directory of generated files
      
 ###### ** This README expects that you are in the directory where files will be stored **
+
 ## Creating new input files:
 > Input files can be created by calling the create_files executable generated
-> using the Makefile with/without command line arguments.
- 
+> using the Makefile with/without command line arguments
+
 ### Usage: 
   **./create_files** file_name nbr_files nbr_lines nbr_values min_value max_value
  
@@ -54,9 +56,11 @@ file's name.
  6. max_value - desired maximum integer value to be generated
                   {default=100}
 
-
-
 ## Sorting Files:
+> Sorting files creates a new file with the integers on each line sorted from 
+> from least to greatest. This file is stored under the original file's name
+> with a _'-sorted'_ tag added before the format suffix
+
 ### Usage:
   **./sort_file** file_name
   

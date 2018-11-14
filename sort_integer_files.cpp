@@ -129,7 +129,7 @@ int write_file(vector<vector<int>> parsed_lines)
 		    (line_it < line.end()-1) ?
 		        line_string << *line_it << " " : line_string << *line_it;
 		}
-		//cout << line_string.str() << endl;
+		
 		(main_it < parsed_lines.end()-1) ?
 	        my_outfile << line_string.str() << endl : my_outfile << line_string.str();
 	}
@@ -137,7 +137,6 @@ int write_file(vector<vector<int>> parsed_lines)
 
 vector<chrono::high_resolution_clock::time_point> execute(int argc, char* argv[])
 {
-          
   vector<chrono::high_resolution_clock::time_point> io_clocks;
   
   int args_parsed = parse_command_arguments(argc, argv);
@@ -147,27 +146,27 @@ vector<chrono::high_resolution_clock::time_point> execute(int argc, char* argv[]
 	  stringstream out_file_name;
 	  out_file_name << file_name << file_amend << file_format;
 	  
+	  io_clocks.push_back(chrono::high_resolution_clock::now());
   	  my_infile.open(in_file_name, ios::in);
 	  bool file_read_success = false;
   
 	  // if it was created/opened correctly,
 	  if (my_infile.is_open())
 	  {
-	  	//int args_parsed = parse_command_arguments(argc, argv);
 	  	file_read_success = true;
 	  	
-	  	io_clocks.push_back(chrono::high_resolution_clock::now());
 	  	vector<vector<int>> parsed_lines = read_file();
 	  	my_infile.close();
 	  	io_clocks.push_back(chrono::high_resolution_clock::now());
 	  	
 	  	if (parsed_lines.size() > 0)
 	  	{
+	  		io_clocks.push_back(chrono::high_resolution_clock::now());
 	  		// create the stream for writing to the new file
 	  		my_outfile.open(out_file_name.str(), ios::out);
 	  		if (my_outfile.is_open())
 	  		{
-	  			io_clocks.push_back(chrono::high_resolution_clock::now());
+	  			
 		  		write_file(parsed_lines);
 		  		my_outfile.close();
 		  		io_clocks.push_back(chrono::high_resolution_clock::now());
