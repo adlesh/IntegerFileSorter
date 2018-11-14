@@ -2,13 +2,14 @@
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
-#include <ctime>
-#include <cmath>
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
-#include <sys/resource.h>
+#include <chrono>
+
+//typedef std::chrono::high_resolution_clock Clock;
+
 enum Exceptions {no_exc = 0, inv_arg_exc, out_of_range_exc};
 
 const int numerical_arg_start_ndx = 2;
@@ -93,14 +94,12 @@ vector<int> sort_line(vector<int> values_from_line)
 
 vector<vector<int>> read_file()
 {
-	cout << in_file_name << " was opened successfully.\n";
     string curr_line;    
     vector<vector<int>> lines_from_file;
     try
     {
 	    while (getline(my_infile, curr_line))
 	    {
-	    	//cout << curr_line << endl;
 	    	vector<int> parsed_ints_from_line = tokenize_line(curr_line);
 	    	parsed_ints_from_line = sort_line(parsed_ints_from_line);
 	    	lines_from_file.push_back (parsed_ints_from_line);
@@ -136,8 +135,11 @@ int write_file(vector<vector<int>> parsed_lines)
 	}
 }
 
-void execute(int argc, char* argv[])
+vector<chrono::high_resolution_clock::time_point> execute(int argc, char* argv[])
 {
+          
+  vector<chrono::high_resolution_clock::time_point> io_clocks;
+  
   int args_parsed = parse_command_arguments(argc, argv);
   if (args_parsed == no_exc)
   {
@@ -151,55 +153,61 @@ void execute(int argc, char* argv[])
 	  // if it was created/opened correctly,
 	  if (my_infile.is_open())
 	  {
-	  	int args_parsed = parse_command_arguments(argc, argv);
+	  	//int args_parsed = parse_command_arguments(argc, argv);
 	  	file_read_success = true;
+	  	
+	  	io_clocks.push_back(chrono::high_resolution_clock::now());
 	  	vector<vector<int>> parsed_lines = read_file();
+	  	my_infile.close();
+	  	io_clocks.push_back(chrono::high_resolution_clock::now());
+	  	
 	  	if (parsed_lines.size() > 0)
 	  	{
 	  		// create the stream for writing to the new file
 	  		my_outfile.open(out_file_name.str(), ios::out);
 	  		if (my_outfile.is_open())
 	  		{
+	  			io_clocks.push_back(chrono::high_resolution_clock::now());
 		  		write_file(parsed_lines);
 		  		my_outfile.close();
+		  		io_clocks.push_back(chrono::high_resolution_clock::now());
 	  		}
 	  		else cout << "Unable to open file " << out_file_name.str() << endl;
 	  	}
-	    my_infile.close();
+	    
 	  }
 	  else cout << "Unable to open file " << in_file_name << endl;
   }
+  
+  return io_clocks;
 }
 int main (int argc, char* argv[]) 
 {
-  struct rusage r_usage;
-  getrusage(RUSAGE_SELF, &r_usage);
-  long start_in_block, start_out_block,
-       end_in_block, end_out_block,
-       diff_in_block, diff_out_block;
-       
-  clock_t start_clock, end_clock;
+  chrono::high_resolution_clock::time_point start_clock, end_clock;
   
-  start_clock = clock();
-  start_in_block = r_usage.ru_inblock;
-  start_out_block = r_usage.ru_oublock;
+  start_clock = chrono::high_resolution_clock::now();
   
-  execute(argc, argv);
+  vector<chrono::high_resolution_clock::time_point> io_clocks = execute(argc, argv);
   
-  getrusage(RUSAGE_SELF, &r_usage);
+  end_clock = chrono::high_resolution_clock::now();
   
-  end_in_block = r_usage.ru_inblock;
-  end_out_block = r_usage.ru_oublock;
-  end_clock = clock();
+  double diff_input_clocks = chrono::duration_cast<chrono::nanoseconds>(io_clocks[1] - io_clocks[0]).count();
+  double diff_output_clocks = chrono::duration_cast<chrono::nanoseconds>(io_clocks[3] - io_clocks[2]).count();
   
-  diff_in_block = end_in_block - start_in_block;
-  diff_out_block = end_out_block - start_out_block;
+  double clock_diff = chrono::duration_cast<chrono::nanoseconds>(end_clock - start_clock).count();
   
-  cout << "Input blocking: " << diff_in_block << endl <<
-          "Output blocking: " << diff_out_block << endl;
+  double io_time = (diff_input_clocks + diff_output_clocks);
   
-  double clock_diff = 1000*(end_clock - start_clock) / CLOCKS_PER_SEC;
+  ofstream times_log("times.log", ios::app);
   
-  cout << "Diff in clocks: " << clock_diff << " ms"<< endl;
-  return 0;
+  if (times_log.is_open())
+  {
+      times_log << in_file_name << endl;
+      times_log << "CPU Time: " << clock_diff << " ns"<< endl;
+	  times_log << "IO Time:   " << endl << 
+	          "   Total:  " << io_time << " ns" << endl <<
+	          "   Input:  " << diff_input_clocks << " ns" << endl <<
+	          "   Output: " << diff_output_clocks<< " ns" << endl;
+  }
+  return 0; 
 }
