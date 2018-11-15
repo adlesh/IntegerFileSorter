@@ -57,7 +57,7 @@ file's name.
                   {default=100}
 
 ## Sorting Files:
-> Sorting files creates a new file with the integers on each line sorted from 
+> Sorting files creates a new file with the integers on each line sorted 
 > from least to greatest. This file is stored under the original file's name
 > with a _'-sorted'_ tag added before the format suffix
 

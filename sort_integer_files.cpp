@@ -197,7 +197,10 @@ int main (int argc, char* argv[])
   
   double io_time = (diff_input_clocks + diff_output_clocks);
   
-  ofstream times_log("times.log", ios::app);
+  stringstream log_file;
+  log_file << file_name << ".log";
+  
+  ofstream times_log(log_file.str(), ios::app);
   
   if (times_log.is_open())
   {
